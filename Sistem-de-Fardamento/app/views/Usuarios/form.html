@@ -1,0 +1,22 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<form action="@{Usuarios.salvar}">
+
+	<input type="hidden" name="usuario.id" value="${usuario?.id}" />
+
+	Nome <input type="text" name="usuario.nome" value="${usuario?.nome}" /> <br/> 
+	
+	E-mail <input type="text" name="usuario.email" value="${usuario?.email}" /> <br/>
+	
+	Senha <input type="password" name="senha" value="" /> <br/>
+	
+	Nivel 
+	<select name="usuario.nivel">
+		<option value="0" #{if usuario?.nivel == 0} selected #{/if}>Comum</option>
+		<option value="1" #{if usuario?.nivel == 1} selected #{/if}>Admin</option>
+	</select>
+	 <br/>
+	
+	<button>Salvar</button>
+</form>

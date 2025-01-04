@@ -1,0 +1,15 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+
+
+#{list items:usuarios, as:'u'}
+	
+	#{if session.get("usuario.nivel").equals("1")}
+		<a href="@{Usuarios.editar(u.id)}">Editar</a>
+		<a href="@{Usuarios.remover(u.id)}">Remover</a>
+	#{/if}
+
+	${u.nome} ${u.email} <br/>
+	
+#{/list}
