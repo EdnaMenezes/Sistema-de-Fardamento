@@ -1,31 +1,58 @@
 <!DOCTYPE html>
-
 <html>
     <head>
         <title>#{get 'title' /}</title>
         <meta charset="${_response_encoding}">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/iconeSTF.png'}">
     </head>
     <body>
-    . 
-    	
-    	#{if session.get("usuario.nivel").equals("1")}
-    		<a href="@{Usuarios.form}">Cadastro</a>
-    	#{/if}
-    	
-    	
-    	<a href="@{Usuarios.listar}">Lista</a>
-    	<a href="@{Login.sair}">Sair</a>
-    	
-    	<p>Bem vindo! ${session.get("usuario.nome")}
-    	
-    	<br/>
-    
+        .
+        #{if session.get("usuario.nivel").equals("1")}
+            <a href="@{Usuarios.form}" class="btn btn-primary">Cadastrar Usuário</a>
+            <a href="@{Produtos.form}" class="btn btn-primary">Cadastrar Fardamento</a>
+            <a href="@{Produtos.listar}" class="btn btn-primary">Ver Fardamento Cadastrado</a>
+        #{/if}
+
+        <!-- Verifica se o usuário está logado antes de exibir os links "Lista" e "Sair" -->
+        #{if session.get("usuario.email") != null}
+            <a href="@{Login.sair}" class="btn btn-danger">Sair</a>
+            
+            <p>Bem-vindo, <span id="usuario-nome">${session.get("usuario.nome")}</span></p>
+        #{/if}
+        
+        <br/>
+
         #{doLayout /}
         
         <script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         #{get 'moreScripts' /}
+
+        <!--  para salvar usuário com AJAX e atualizar o nome -->
+        <script>
+            function salvarUsuario() {
+                var form = $('#usuario-form');
+                $.ajax({
+                    type: 'POST',
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        // Atualize o nome do usuário exibido
+                        $('#usuario-nome').text(response.nome);
+                        alert('Usuário salvo com sucesso!');
+                        // Redirecionar para a tela de listagem
+                        window.location.href = '@{Usuarios.listar}';
+                    },
+                    error: function() {
+                        alert('Erro ao salvar usuário.');
+                    }
+                });
+            }
+        </script>
     </body>
 </html>

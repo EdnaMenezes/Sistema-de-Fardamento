@@ -1,15 +1,36 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
-
-
-#{list items:usuarios, as:'u'}
-	
-	#{if session.get("usuario.nivel").equals("1")}
-		<a href="@{Usuarios.editar(u.id)}">Editar</a>
-		<a href="@{Usuarios.remover(u.id)}">Remover</a>
-	#{/if}
-
-	${u.nome} ${u.email} <br/>
-	
-#{/list}
+<div class="container mt-5">
+    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#lista-usuarios">
+        Ver Lista de Usuários
+    </button>
+    
+    <div id="lista-usuarios" class="collapse mt-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Tipo de Usuário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                #{list items:usuarios, as:'u'}
+                <tr>
+                    <td>${u.nome}</td>
+                    <td>${u.email}</td>
+                    <td>${u.nivel == 1 ? 'Administrador' : 'Cliente'}</td>
+                    <td>
+                        #{if session.get("usuario.nivel").equals("1")}
+                            <a href="@{Usuarios.editar(u.id)}" class="btn btn-primary btn-sm">Editar</a>
+                            <a href="@{Usuarios.remover(u.id)}" class="btn btn-danger btn-sm">Remover</a>
+                        #{/if}
+                    </td>
+                </tr>
+                #{/list}
+            </tbody>
+        </table>
+    </div>
+</div>

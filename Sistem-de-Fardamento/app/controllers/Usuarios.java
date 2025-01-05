@@ -16,13 +16,16 @@ public class Usuarios extends Controller {
 	}
 	
 	public static void salvar(Usuario usuario, String senha) {
-		
-		if (senha.equals("") == false){
-			usuario.senha = senha;
-		}
-		
-		usuario.save();
-		listar();
+	    if (!senha.isEmpty()){
+	        usuario.senha = senha;
+	    }
+	    
+	    usuario.save();
+
+	    // Atualize a sessão com o novo nome
+	    session.put("usuario.nome", usuario.nome);
+
+	    listar(); // Redirecionar para a tela de listagem
 	}
 	
 	public static void editar(Long id) {

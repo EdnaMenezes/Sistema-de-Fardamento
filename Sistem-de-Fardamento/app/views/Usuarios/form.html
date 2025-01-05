@@ -1,22 +1,36 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
-<form action="@{Usuarios.salvar}">
-
+<form id="usuario-form" action="@{Usuarios.salvar}" method="post" class="container mt-5">
+ <!-- Campo oculto para o ID do usuário -->
 	<input type="hidden" name="usuario.id" value="${usuario?.id}" />
+ <!-- Campo para Nome -->
+ <div class="form-group">
+	<label for="nome">Nome</label>
+	<input type="text" class="form-control" id="nome" name="usuario.nome" value="${usuario?.nome}" />
+</div>
 
-	Nome <input type="text" name="usuario.nome" value="${usuario?.nome}" /> <br/> 
-	
-	E-mail <input type="text" name="usuario.email" value="${usuario?.email}" /> <br/>
-	
-	Senha <input type="password" name="senha" value="" /> <br/>
-	
-	Nivel 
-	<select name="usuario.nivel">
-		<option value="0" #{if usuario?.nivel == 0} selected #{/if}>Comum</option>
-		<option value="1" #{if usuario?.nivel == 1} selected #{/if}>Admin</option>
+<!-- Campo para E-mail -->
+<div class="form-group">
+	<label for="email">E-mail</label>
+	<input type="email" class="form-control" id="email" name="usuario.email" value="${usuario?.email}" />
+</div>
+
+<!-- Campo para Senha -->
+<div class="form-group">
+	<label for="senha">Senha</label>
+	<input type="password" class="form-control" id="senha" name="senha" />
+</div>
+
+<!-- Campo para Nível -->
+<div class="form-group">
+	<label for="nivel">Que tipo de usuário você quer cadastrar?</label>
+	<select class="form-control" id="nivel" name="usuario.nivel">
+		<option value="0" #{if usuario?.nivel == 0} selected #{/if}>Cliente</option>
+		<option value="1" #{if usuario?.nivel == 1} selected #{/if}>Administrador</option>
 	</select>
-	 <br/>
-	
-	<button>Salvar</button>
+</div>
+
+<!-- Botão para enviar o formulário -->
+<button type="button" class="btn btn-primary" onclick="salvarUsuario()">Salvar</button>
 </form>
