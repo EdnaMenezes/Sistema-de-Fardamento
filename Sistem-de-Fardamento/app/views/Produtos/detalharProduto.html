@@ -1,0 +1,10 @@
+
+<h1>Detalhes da Camisa</h1>
+<img src="@{Produtos.verFoto(produto.id)}" class="img-thumbnail" />
+<p><strong>Nome:</strong> ${produto.nomeProduto}</p>
+<p><strong>Tamanhos Disponíveis:</strong> ${produto.tamanhoProdutoDisp != null ? String.join(", ", produto.tamanhoProdutoDisp) : 'Não especificado'}</p>
+<p><strong>Modelos:</strong> ${produto.modelo != null ? String.join(", ", produto.modelo) : 'Não especificado'}</p>
+
+<a href="@{Produtos.form}">Cadastrar Nova Camisa</a> |
+<a href="@{Produtos.editar(produto.id)}">Editar</a> |
+<a href="@{Produtos.listar(null)}">Voltar para a listagem</a>
