@@ -10,29 +10,37 @@ import java.util.stream.Collectors;
 import models.Produto;
 import play.db.jpa.Blob;
 import play.libs.MimeTypes;
+import play.mvc.Before;
 import play.mvc.Controller;
 
-
 public class Produtos extends Controller {
-	public static void form() { 
-		renderTemplate("Produtos/form.html"); 
-	}
-   	public static void listar(String termo) { 
-	    List<Produto> produtos = null;
-	    if (termo == null) {
-	        produtos = Produto.findAll();
-	    } else {
-	        produtos = Produto.find("lower(nomeProduto) like ?1",
-	                "%" + termo.toLowerCase() + "%").fetch();
-	    }
-	    renderTemplate("Produtos/listarProdutos.html", produtos, termo);
 
+    @Before
+    static void verificarAutenticacao() {
+        if (session.contains("usuario.email") == false) {
+            Login.form();
+        }
+    }
+
+    public static void form() {
+        renderTemplate("Produtos/form.html");
+    }
+
+    public static void listar(String termo) {
+        List<Produto> produtos = null;
+        if (termo == null) {
+            produtos = Produto.findAll();
+        } else {
+            produtos = Produto.find("lower(nomeProduto) like ?1",
+                    "%" + termo.toLowerCase() + "%").fetch();
+        }
+        renderTemplate("Produtos/listarProdutos.html", produtos, termo);
     }
 
     public static void detalhar(Long id) {
         Produto produto = Produto.findById(id);
         notFoundIfNull(produto);
-        renderTemplate("Produtos/detalharProduto.html", produto);
+        render("Produtos/detalharProduto.html", produto);
     }
 
     public static void verFoto(Long id) {
@@ -40,6 +48,16 @@ public class Produtos extends Controller {
         notFoundIfNull(p);
         response.setContentTypeIfNotSet(p.foto.type());
         renderBinary(p.foto.get());
+    }
+
+    public static void imagem(Long id) {
+        Produto produto = Produto.findById(id);
+        if (produto != null && produto.foto != null) {
+            File foto = produto.foto.getFile();
+            renderBinary(foto);
+        } else {
+            notFound("Imagem não encontrada.");
+        }
     }
 
     public static void salvar(File foto, Produto produto, List<String> tamanhoProdutoDisp, List<String> modelo) {
@@ -51,14 +69,14 @@ public class Produtos extends Controller {
 
         if (tamanhoProdutoDisp != null) {
             produto.tamanhoProdutoDisp = tamanhoProdutoDisp.stream()
-                                            .map(String::toUpperCase)
-                                            .collect(Collectors.toList());
+                    .map(String::toUpperCase)
+                    .collect(Collectors.toList());
         }
 
         if (modelo != null) {
             produto.modelo = modelo.stream()
-                                    .map(String::toUpperCase)
-                                    .collect(Collectors.toList());
+                    .map(String::toUpperCase)
+                    .collect(Collectors.toList());
         }
 
         if (foto != null) {
@@ -66,9 +84,9 @@ public class Produtos extends Controller {
             try (InputStream is = new FileInputStream(foto)) {
                 produto.foto.set(is, MimeTypes.getContentType(foto.getName()));
             } catch (FileNotFoundException e) {
-                e.printStackTrace(); 
+                e.printStackTrace(); // Log the error
             } catch (IOException e) {
-                e.printStackTrace(); 
+                e.printStackTrace(); // Log the error
             }
         }
 
@@ -77,10 +95,10 @@ public class Produtos extends Controller {
         listar(null);
     }
 
-    public static void editar(Long id) { 
-    	Produto produto = Produto.findById(id); 
-    	notFoundIfNull(produto); 
-    	renderTemplate("Produtos/form.html", produto);
+    public static void editar(Long id) {
+        Produto produto = Produto.findById(id);
+        notFoundIfNull(produto);
+        renderTemplate("Produtos/form.html", produto);
     }
 
     public static void remover(Long id) {
