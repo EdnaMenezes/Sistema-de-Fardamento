@@ -1,36 +1,128 @@
+<!-- Define o layout principal da página -->
 #{extends 'main.html' /}
-#{set title:'Home' /}
+<!-- Define o título da página -->
+#{set title:'Cadastro de Usuário' /}
 
-<form id="usuario-form" action="@{Usuarios.salvar}" method="post" class="container mt-5">
- <!-- Campo oculto para o ID do usuário -->
-	<input type="hidden" name="usuario.id" value="${usuario?.id}" />
- <!-- Campo para Nome -->
- <div class="form-group">
-	<label for="nome">Nome</label>
-	<input type="text" class="form-control" id="nome" name="usuario.nome" value="${usuario?.nome}" />
-</div>
+<form id="usuario-form" action="@{Usuarios.salvar}" method="post" class="container mt-5 p-5 rounded shadow-lg" style="max-width: 600px; background: #000; border: 1px solid #28a745; color: #fff;">
+    <!-- Campo oculto para o ID do usuário -->
+    <input type="hidden" name="usuario.id" value="${usuario?.id}" />
 
-<!-- Campo para E-mail -->
-<div class="form-group">
-	<label for="email">E-mail</label>
-	<input type="email" class="form-control" id="email" name="usuario.email" value="${usuario?.email}" />
-</div>
+    <!-- Título do Formulário -->
+    <h2 class="text-center mb-4 fw-bold" style="color: #28a745;">
+        <!-- Muda o título com base no ID do usuário -->
+        #{if usuario?.id} Editar Usuário #{/if}
+        #{else} Cadastrar Usuário #{/else}
+    </h2>
+    <p class="text-center text-muted mb-4">Preencha as informações para criar ou atualizar um usuário.</p>
 
-<!-- Campo para Senha -->
-<div class="form-group">
-	<label for="senha">Senha</label>
-	<input type="password" class="form-control" id="senha" name="senha" />
-</div>
+    <!-- Campo para Nome -->
+    <div class="form-group mb-4">
+        <label for="nome" class="form-label fw-semibold" style="color: #28a745;">Nome</label>
+        <input type="text" class="form-control shadow-sm" id="nome" name="usuario.nome" value="${usuario?.nome}" placeholder="Digite o nome completo" style="background-color: #222; border: 1px solid #28a745; color: #fff;" />
+    </div>
+    
+    <!-- Campo para E-mail -->
+    <div class="form-group mb-4">
+        <label for="email" class="form-label fw-semibold" style="color: #28a745;">E-mail</label>
+        <input type="email" class="form-control shadow-sm" id="email" name="usuario.email" value="${usuario?.email}" placeholder="exemplo@dominio.com" style="background-color: #222; border: 1px solid #28a745; color: #fff;" />
+    </div>
 
-<!-- Campo para Nível -->
-<div class="form-group">
-	<label for="nivel">Que tipo de usuário você quer cadastrar?</label>
-	<select class="form-control" id="nivel" name="usuario.nivel">
-		<option value="0" #{if usuario?.nivel == 0} selected #{/if}>Cliente</option>
-		<option value="1" #{if usuario?.nivel == 1} selected #{/if}>Administrador</option>
-	</select>
-</div>
+    <!-- Campo para Senha -->
+    <div class="form-group mb-4">
+        <label for="senha" class="form-label fw-semibold" style="color: #28a745;">Senha</label>
+        <input type="password" class="form-control shadow-sm" id="senha" name="senha" placeholder="Digite uma senha forte" style="background-color: #222; border: 1px solid #28a745; color: #fff;" />
+    </div>
 
-<!-- Botão para enviar o formulário -->
-<button type="button" class="btn btn-primary" onclick="salvarUsuario()">Salvar</button>
+    <!-- Campo para Nível de Ensino -->
+    <div class="form-group mb-4">
+        <label for="nivelDeEnsino" class="form-label fw-semibold" style="color: #28a745;">Nível de Ensino</label>
+        <select class="form-select shadow-sm" id="nivelDeEnsino" name="nivelDeEnsino" style="background-color: #222; border: 1px solid #28a745; color: #fff;">
+            <option value="">Selecione...</option>
+            <option value="SUPERIOR">Superior</option>
+            <option value="MEDIO">Médio</option>
+        </select>
+    </div>
+
+    <!-- Campo para Curso -->
+    <div class="form-group mb-4">
+        <label for="curso" class="form-label fw-semibold" style="color: #28a745;">Curso</label>
+        <select class="form-select shadow-sm" id="curso" name="curso" style="background-color: #222; border: 1px solid #28a745; color: #fff;">
+            <option value="">Selecione um nível de ensino primeiro...</option>
+        </select>
+    </div>
+    
+    <!-- Campo para Nível -->
+    <div class="form-group mb-5">
+        <label for="nivel" class="form-label fw-semibold" style="color: #28a745;">Tipo de Usuário</label>
+        <select class="form-select shadow-sm" id="nivel" name="usuario.nivel" style="background-color: #222; border: 1px solid #28a745; color: #fff;">
+            <option value="0" #{if usuario?.nivel == 0} selected #{/if}>Cliente</option>
+            <option value="1" #{if usuario?.nivel == 1} selected #{/if}>Administrador</option>
+        </select>
+    </div>
+    
+    <!-- Botões de Ação -->
+    <div class="d-flex justify-content-between align-items-center">
+        <button type="button" class="btn btn-success px-4 py-2 fw-bold shadow-sm" onclick="salvarUsuario()">Salvar</button>
+        <a href="@{Usuarios.nivel1()}" class="btn btn-outline-light px-4 py-2 fw-bold shadow-sm">Voltar</a>
+    </div>
 </form>
+
+<!-- JavaScript para AJAX e Validação -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Carregar cursos com base no nível de ensino selecionado
+        $('#nivelDeEnsino').change(function() {
+            var nivelDeEnsino = $(this).val();
+            $.ajax({
+                url: '@{Cursos.getCursos()}', // Ajuste a URL para corresponder à sua configuração de rota
+                type: 'GET',
+                data: { nivelDeEnsino: nivelDeEnsino },
+                success: function(cursos) {
+                    var $curso = $('#curso');
+                    $curso.empty();
+                    if (cursos.length > 0) {
+                        cursos.forEach(function(curso) {
+                            $curso.append('<option value="' + curso + '">' + curso + '</option>');
+                        });
+                    } else {
+                        $curso.append('<option value="">Nenhum curso disponível</option>');
+                    }
+                },
+                error: function() {
+                    alert('Erro ao carregar cursos.');
+                }
+            });
+        });
+    });
+
+    function salvarUsuario() {
+        // Validações antes de enviar o formulário
+        const nome = document.getElementById("nome").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("senha").value.trim();
+        const nivelDeEnsino = document.getElementById("nivelDeEnsino").value;
+
+        if (!nome) {
+            alert("Por favor, preencha o campo Nome.");
+            return;
+        }
+        
+        if (!email) {
+            alert("Por favor, preencha o campo E-mail.");
+            return;
+        }
+
+        if (!senha) {
+            alert("Por favor, preencha o campo Senha.");
+            return;
+        }
+
+        if (!nivelDeEnsino) {
+            alert("Por favor, selecione o Nível de Ensino.");
+            return;
+        }
+
+        document.getElementById("usuario-form").submit(); // Envia o formulário
+    }
+</script>

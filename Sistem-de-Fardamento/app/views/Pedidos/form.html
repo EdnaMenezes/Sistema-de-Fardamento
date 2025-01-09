@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres da página como UTF-8. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura a viewport para responsividade. -->
+    <title>Fazer Pedido</title> <!-- Define o título da página. -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Importa o CSS do Bootstrap. -->
+    <style>
+        /* Tema Preto e Verde */
+        body {
+            background-color: #121212; /* Cor de fundo do corpo. */
+            color: #ffffff; /* Cor do texto. */
+        }
+
+        h1 {
+            color: #28a745; /* Cor do título. */
+            text-align: center; /* Alinhamento centralizado do título. */
+            margin-bottom: 30px; /* Margem inferior do título. */
+        }
+
+        .container {
+            background-color: #1e1e1e; /* Cor de fundo do container. */
+            padding: 30px; /* Padding do container. */
+            border-radius: 8px; /* Bordas arredondadas do container. */
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2); /* Sombra do container. */
+        }
+
+        .form-label {
+            font-weight: bold; /* Negrito no rótulo do formulário. */
+            color: #28a745; /* Cor do rótulo do formulário. */
+        }
+
+        .form-control {
+            background-color: #2c2c2c; /* Cor de fundo dos controles do formulário. */
+            color: #ffffff; /* Cor do texto dos controles do formulário. */
+            border: 1px solid #28a745; /* Cor da borda dos controles do formulário. */
+        }
+
+        .form-control:focus {
+            border-color: #28a745; /* Cor da borda ao focar nos controles do formulário. */
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.5); /* Sombra ao focar nos controles do formulário. */
+        }
+
+        select.form-control {
+            background-color: #2c2c2c; /* Cor de fundo dos seletores do formulário. */
+        }
+
+        .btn-primary {
+            background-color: #28a745; /* Cor de fundo dos botões primários. */
+            border: none; /* Remove a borda dos botões primários. */
+        }
+
+        .btn-primary:hover {
+            background-color: #218838; /* Cor de fundo dos botões primários ao passar o mouse. */
+        }
+
+        .btn-secondary {
+            background-color: #444444; /* Cor de fundo dos botões secundários. */
+            border: none; /* Remove a borda dos botões secundários. */
+        }
+
+        .btn-secondary:hover {
+            background-color: #555555; /* Cor de fundo dos botões secundários ao passar o mouse. */
+        }
+
+        img#product-image {
+            border: 2px solid #28a745; /* Borda da imagem do produto. */
+            margin-top: 10px; /* Margem superior da imagem do produto. */
+        }
+
+        .btn[disabled] {
+            background-color: #555555; /* Cor de fundo dos botões desativados. */
+            border-color: #555555; /* Cor da borda dos botões desativados. */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Fazer Pedido</h1>
+        <form action="@{Pedidos.salvar}" method="POST" class="container mt-5">
+            <!-- Campo oculto para o ID do pedido -->
+            <input type="hidden" name="pedido.id" value="${pedido?.id}" />
+
+            <div class="mb-3">
+                <label class="form-label">Selecione a camisa que deseja comprar:</label>
+                <select class="form-control" name="pedido.produto.id" onchange="updateProductDetails(this)" required>
+                    #{list items:produtos, as:'produto'}
+                    <option value="${produto.id}" data-sizes="${produto.tamanhoProdutoDisp}" data-models="${produto.modelo}" data-image="@{Produtos.imagem(produto.id)}" #{if pedido?.produto?.id == produto.id}selected#{/if}>${produto.nomeProduto}</option>
+                    #{/list}
+                </select>
+                <div class="mt-3">
+                    <img id="product-image" src="" alt="Imagem do Produto" class="img-thumbnail" style="display: none; max-width: 200px;" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tamanhos Disponíveis:</label><br>
+                <div id="tamanhos">
+                    <!-- Radio buttons for sizes will be inserted here -->
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Modelos Disponíveis:</label><br>
+                <div id="modelos">
+                    <!-- Radio buttons for models will be inserted here -->
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Quantidade:</label>
+                <input type="number" class="form-control" name="pedido.quantidade" value="${pedido?.quantidade}" min="1" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Cliente:</label>
+                <input type="text" class="form-control" name="pedido.cliente" value="${pedido?.cliente}" onkeyup="checkFormValidity()" required />
+            </div>
+
+            <div class="mb-3 text-center">
+                <input type="submit" id="submit-btn" class="btn btn-primary fw-bold px-4" value="Fazer Pedido" disabled />
+                <a href="@{Usuarios.nivel0()}" class="btn btn-secondary fw-bold px-4">Voltar</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function updateProductDetails(select) {
+            var selectedOption = select.options[select.selectedIndex];
+            var sizes = selectedOption.getAttribute('data-sizes').split(',');
+            var models = selectedOption.getAttribute('data-models').split(',');
+            var imageUrl = selectedOption.getAttribute('data-image');
+            var productImage = document.getElementById('product-image');
+
+            // Atualiza os tamanhos
+            var sizeContainer = document.getElementById('tamanhos');
+            sizeContainer.innerHTML = '';
+            sizes.forEach(function(size) {
+                sizeContainer.innerHTML += '<input type="radio" name="pedido.tamanho" value="' + size + '" onclick="checkFormValidity()" /> ' + size + '<br>';
+            });
+
+            // Atualiza os modelos
+            var modelContainer = document.getElementById('modelos');
+            modelContainer.innerHTML = '';
+            models.forEach(function(model) {
+                modelContainer.innerHTML += '<input type="radio" name="pedido.modelo" value="' + model + '" onclick="checkFormValidity()" /> ' + model + '<br>';
+            });
+
+            // Atualiza a imagem do produto
+            if (imageUrl) {
+                productImage.src = imageUrl;
+                productImage.style.display = 'block';
+            } else {
+                productImage.style.display = 'none';
+            }
+
+            // Verifica a validade do formulário
+            checkFormValidity();
+        }
+
+        function checkFormValidity() {
+            var sizeSelected = document.querySelector('input[name="pedido.tamanho"]:checked');
+            var modelSelected = document.querySelector('input[name="pedido.modelo"]:checked');
+            var clientName = document.querySelector('input[name="pedido.cliente"]').value.trim();
+            var submitButton = document.getElementById('submit-btn');
+
+            if (sizeSelected && modelSelected && clientName) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var select = document.querySelector('select[name="pedido.produto.id"]');
+            if (select) {
+                updateProductDetails(select);
+            }
+        });
+    </script>
+</body>
+</html>

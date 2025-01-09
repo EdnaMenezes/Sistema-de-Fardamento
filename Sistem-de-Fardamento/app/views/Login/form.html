@@ -1,10 +1,137 @@
+#{extends 'main.html' /}
+#{set title:'Login' /}
 
-<form action="@{Login.logar}" method="POST">
+<head>
+   <style>
+      /* Importa a fonte Montserrat */
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
 
-E-mail <input name="email"> <br/>
+      /* Estilo global */
+      body, html {
+         height: 100%;
+         margin: 0;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         background: transparent; /* Fundo transparente */
+         font-family: 'Montserrat', sans-serif;
+         overflow: hidden; /* Remove barra de rolagem */
+      }
 
-Senha <input name="senha" type="password"> <br/>
+      /* Container do formulário */
+      .form-signin-container {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         width: 100%;
+         padding: 15px;
+      }
 
-<button>Entrar</button>
+      /* Estilização do formulário */
+      .form-content {
+         background: #000; /* Fundo preto */
+         color: #fff;
+         padding: 2rem;
+         border-radius: 15px;
+         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+         max-width: 400px;
+         width: 100%;
+      }
 
-</form>
+      .form-content img {
+         margin-bottom: 1rem;
+      }
+
+      /* Inputs */
+      .form-floating {
+         margin-bottom: 1rem;
+      }
+
+      .form-control {
+         border: none;
+         border-bottom: 1px solid #28a745;
+         background: transparent;
+         color: #fff;
+         border-radius: 0;
+      }
+
+      .form-control:focus {
+         box-shadow: none;
+         border-bottom: 1px solid #34d058;
+      }
+
+      /* Botão de Login */
+      .btn-login {
+         border-radius: 25px;
+         background: linear-gradient(to right, #28a745, #34d058);
+         color: #fff;
+         padding: 0.5rem 1rem;
+         font-weight: bold;
+         transition: background 0.3s;
+      }
+
+      .btn-login:hover {
+         background: linear-gradient(to right, #1b3324, #0e1a0e);
+      }
+
+      /* Feedback de validação */
+      .invalid-feedback {
+         font-size: 0.9rem;
+      }
+   </style>
+</head>
+
+<!-- Estrutura do Formulário -->
+<div class="form-signin-container">
+   <div class="form-content">
+      <div class="text-center mb-4">
+         <img src="/public/images/LogoSPF.png" alt="Logo" width="120" height="120">
+      </div>
+      <form action="@{Login.logar}" method="post" class="form-signin needs-validation" novalidate>
+         <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" placeholder="nome@exemplo.com" name="email" required>
+            <label for="email">Email Cadastrado</label>
+            <div class="invalid-feedback">Por favor, preencha o campo E-mail.</div>
+         </div>
+         <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="senha" placeholder="Senha" name="senha" required minlength="6">
+            <label for="senha">Senha</label>
+            <div class="invalid-feedback">Por favor, preencha o campo Senha com pelo menos 6 caracteres.</div>
+         </div>
+         <button class="w-100 btn btn-lg btn-login" type="submit">Entrar</button>
+      </form>
+   </div>
+</div>
+
+<script>
+//Validação personalizada Bootstrap
+(function() {
+    'use strict'; // Usa o modo estrito para toda a função, ajudando a escrever um código "mais seguro".
+
+    // Adiciona um evento para quando a página carregar completamente.
+    window.addEventListener('load', function() {
+        // Obtém todos os formulários que possuem a classe 'needs-validation'.
+        var forms = document.getElementsByClassName('needs-validation');
+
+        // Converte a coleção de formulários em um array e aplica a função de validação a cada um.
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            // Adiciona um ouvinte de evento para o envio do formulário.
+            form.addEventListener('submit', function(event) {
+                // Se o formulário não for válido, previne o envio e a propagação do evento.
+                if (form.checkValidity() === false) {
+                    event.preventDefault(); // Previne o envio do formulário.
+                    event.stopPropagation(); // Previne a propagação do evento.
+                }
+                // Adiciona a classe 'was-validated' ao formulário, que aplica os estilos de validação do Bootstrap.
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+</script>
+
+<!-- Bootstrap e FontAwesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

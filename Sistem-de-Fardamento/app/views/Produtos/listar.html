@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Produtos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212; /* Fundo preto */
+            color: #ffffff; /* Texto branco */
+        }
+
+        h1 {
+            color: #28a745; /* Verde do Bootstrap */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .table-dark {
+            --bs-table-bg: #1c1c1c; /* Tabela com fundo preto escuro */
+            --bs-table-striped-bg: #2a2a2a; /* Linhas listradas mais claras */
+            --bs-table-striped-color: #ffffff;
+            --bs-table-color: #ffffff;
+        }
+
+        .btn-custom-green {
+            background-color: #28a745; /* Verde */
+            color: #fff;
+        }
+
+        .btn-custom-green:hover {
+            background-color: #218838; /* Verde mais escuro no hover */
+        }
+
+        .btn-warning {
+            background-color: #ffc107; /* Amarelo padrão Bootstrap */
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800; /* Amarelo mais escuro no hover */
+        }
+
+        .btn-danger {
+            background-color: #dc3545; /* Vermelho */
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Vermelho mais escuro no hover */
+        }
+
+        .btn-secondary {
+            background-color: #6c757d; /* Cinza */
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Cinza mais escuro no hover */
+        }
+
+        .img-thumbnail {
+            border: 2px solid #28a745; /* Borda verde nas imagens */
+        }
+
+        .container {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #1e1e1e; /* Fundo mais escuro para a área de conteúdo */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Lista de Produtos</h1>
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Nome do Produto</th>
+                    <th>Foto</th>
+                    <th>Tamanhos Disponíveis</th>
+                    <th>Modelos</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop para listar produtos -->
+                #{list items:produtos, as:'produto'}
+                <tr>
+                    <td>${produto.nomeProduto}</td>
+                    <td>
+                        <img src="@{Produtos.imagem(produto.id)}" alt="${produto.nomeProduto}" class="img-thumbnail" style="max-width: 150px;">
+                    </td>
+                    <td>
+                        <ul>
+                            #{list items:produto.tamanhoProdutoDisp, as:'tamanho'}
+                            <li>${tamanho}</li>
+                            #{/list}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            #{list items:produto.modelo, as:'mod'}
+                            <li>${mod}</li>
+                            #{/list}
+                        </ul>
+                    </td>
+                    <td>
+                        <!-- Ações: Editar e Remover -->
+                        <a href="@{Produtos.form(produto.id)}" class="btn btn-warning btn-sm">Editar</a>
+                        <form action="@{Produtos.remover(produto.id)}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?');">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+                #{/list}
+                <!-- Fim do loop -->
+            </tbody>
+        </table>
+        <!-- Botão de Voltar -->
+        <a class="btn btn-custom-green mt-3" href="@{Usuarios.nivel1}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+            </svg> Voltar
+        </a>
+    </div>
+</body>
+</html>

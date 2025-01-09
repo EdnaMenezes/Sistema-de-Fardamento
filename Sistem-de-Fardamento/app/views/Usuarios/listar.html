@@ -1,28 +1,38 @@
-#{extends 'main.html' /}
-#{set title:'Home' /}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#{get 'title' /}</title> <!-- Título dinâmico -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap CSS -->
+    <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}"> <!-- CSS customizado -->
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/LogoSPF.png'}"> <!-- Favicon -->
+    #{get 'moreStyles' /} <!-- Estilos adicionais, se houver -->
+</head>
+<body class="bg-black text-white"> <!-- Fundo preto e texto branco -->
 
-<div class="container mt-5">
-    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#lista-usuarios">
-        Ver Lista de Usuários
-    </button>
-    
-    <div id="lista-usuarios" class="collapse mt-3">
-        <table class="table table-hover">
+    <div class="container mt-5 shadow-lg p-4 rounded"> <!-- Container principal -->
+        <h2 class="text-center mb-4">Lista de Usuários</h2> <!-- Título da página -->
+        <table class="table table-hover table-dark rounded"> <!-- Tabela estilizada -->
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>Email</th>
                     <th>Tipo de Usuário</th>
+                    <th>Senha</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
+                <!-- Loop para listar usuários -->
                 #{list items:usuarios, as:'u'}
                 <tr>
                     <td>${u.nome}</td>
                     <td>${u.email}</td>
                     <td>${u.nivel == 1 ? 'Administrador' : 'Cliente'}</td>
+                    <td>${u.senha}</td> <!-- Senha exibida (considere não exibir por segurança) -->
                     <td>
+                        <!-- Ações disponíveis apenas para administradores -->
                         #{if session.get("usuario.nivel").equals("1")}
                             <a href="@{Usuarios.editar(u.id)}" class="btn btn-primary btn-sm">Editar</a>
                             <a href="@{Usuarios.remover(u.id)}" class="btn btn-danger btn-sm">Remover</a>
@@ -30,7 +40,16 @@
                     </td>
                 </tr>
                 #{/list}
+                <!-- Fim do loop -->
             </tbody>
         </table>
     </div>
-</div>
+
+    <div class="text-center mt-4">
+        <a href="@{Usuarios.nivel1()}" class="btn btn-success px-4 py-2 fw-bold shadow-lg rounded-pill">Voltar</a>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

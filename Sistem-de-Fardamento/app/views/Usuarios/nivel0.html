@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial - Cliente - Nível 0</title> <!-- Título da página -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fonte Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="@{'/public/images/LogoSPF.png'}">
+    <style>
+        /* Estilos gerais */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            background-color: #000;
+            border-bottom: 2px solid #28a745;
+        }
+        .navbar-custom .navbar-brand img {
+            height: 50px;
+        }
+        .navbar-custom .nav-link {
+            color: #fff;
+            font-weight: 500;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #28a745;
+        }
+
+        /* Botões */
+        .btn-custom-green {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-custom-green:hover {
+            background-color: #1f7a36;
+        }
+        .btn-custom-danger {
+            background-color: #fff;
+            color: #dc3545;
+            border-radius: 50px;
+            border: 2px solid #dc3545;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-custom-danger:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        /* Tabela */
+        .table-custom thead {
+            background-color: #222;
+            color: #28a745;
+        }
+        .table-custom tbody tr:nth-child(even) {
+            background-color: #111;
+        }
+        .table-custom tbody tr:hover {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        /* Seção principal */
+        .welcome-section {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .welcome-section h2 {
+            font-weight: 600;
+        }
+        .welcome-section p {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* Rodapé */
+        footer {
+            margin-top: 40px;
+            background-color: #111;
+            color: #ccc;
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #444;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                text-align: center;
+            }
+            .navbar-nav .nav-item {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="@{'/public/images/LogoSPF.png'}" alt="Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="@{Pedidos.form()}" class="btn btn-custom-green btn-sm me-2">Fazer Pedido</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@{Pedidos.listar()}" class="btn btn-custom-green btn-sm me-2">Ver Pedidos</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <a href="@{Login.sair}" class="btn btn-custom-danger btn-sm ms-2">Sair</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Seção de Boas-Vindas -->
+    <div class="container welcome-section">
+        <h2 class="text-success">Bem-vindo, <span id="usuario-nome">${session.get("usuario.nome")}</span></h2>
+        <p>Abaixo estão as informações disponíveis para você:</p>
+        <h5>Se desejar alterar seu pedido ou desistir do pedido, entre em contato com o administrador pelo e-mail admim@admim.com</h5>
+        <br>
+        <h5>Para fazer um pedido de alguma camisa, clique em "Fazer Pedido" e siga os passos:</h5>
+        <p>- Selecione um tipo de camisa</p>
+        <p>- Selecione o tamanho desejado</p>
+        <p>- Escolha o modelo</p>
+        <p>- Insira seu nome</p>
+        <br>
+        <h5>Para ver os pedidos cadastrados, clique em "Ver Pedidos".</h5>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

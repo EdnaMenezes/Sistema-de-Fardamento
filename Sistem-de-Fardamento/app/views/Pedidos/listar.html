@@ -1,0 +1,54 @@
+#{extends 'main.html' /}
+#{set title:'Lista de Pedidos' /}
+<div class="container mt-5 p-4 rounded shadow-lg" style="background: #121212; color: #ffffff;">
+    <!-- Título da Página -->
+    <h2 class="text-center mb-4 fw-bold" style="color: #28a745;">Lista de Pedidos</h2>
+    <p class="text-center text-muted mb-4"> pedidos cadastrados no sistema.</p>
+    
+    <!-- Tabela de Pedidos -->
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle text-center">
+            <thead class="table-success">
+                <tr>
+                    <th style="color: #28a745;">Produto</th>
+                    <th style="color: #28a745;">Quantidade</th>
+                    <th style="color: #28a745;">Tamanho</th>
+                    <th style="color: #28a745;">Modelo</th>
+                    <th style="color: #28a745;">Cliente</th>
+                     #{if session.get("usuario.nivel").equals("1")}
+                    <th style="color: #28a745;">Ações</th>
+                      #{/if}
+                </tr>
+            </thead>
+            <tbody>
+                #{list items:pedidos, as:'pedido'}
+                <tr>
+                    <td>#{if pedido.produto != null} ${pedido.produto.nomeProduto} #{/if} #{else} <span class="text-danger">Produto não disponível</span> #{/else}</td>
+                    <td>${pedido.quantidade}</td>
+                    <td>${pedido.tamanho}</td>
+                    <td>${pedido.modelo}</td>
+                    <td>${pedido.cliente}</td>
+                    <td>
+                        #{if session.get("usuario.nivel").equals("1")}
+                            <a href="@{Pedidos.form(pedido.id)}" class="btn btn-sm btn-outline-success fw-bold shadow-sm">Editar</a>
+                            <a href="@{Pedidos.remover(pedido.id)}" class="btn btn-sm btn-outline-danger fw-bold shadow-sm">Remover</a>
+                        #{/if}
+                    </td>
+                </tr>
+                #{/list}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Botões de Ação -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <a href="@{Pedidos.form()}" class="btn btn-success px-4 py-2 fw-bold shadow-sm">Novo Pedido</a>
+        <!-- Botão de Voltar Dinâmico -->
+        #{if session.get("usuario.nivel").equals("1")}
+            <a href="@{Usuarios.nivel1()}" class="btn btn-outline-secondary px-4 py-2 fw-bold shadow-sm">Voltar</a>
+        #{/if}
+        #{if session.get("usuario.nivel").equals("0")}
+            <a href="@{Usuarios.nivel0()}" class="btn btn-outline-secondary px-4 py-2 fw-bold shadow-sm">Voltar</a>
+        #{/if}
+    </div>
+</div>
