@@ -1,58 +1,48 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>#{get 'title' /}</title>
+        <title>#{get 'title' /}</title> <!-- Título dinâmico -->
         <meta charset="${_response_encoding}">
+        <!-- Bootstrap CSS -->
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Estilos personalizados -->
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Bootstrap JS -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        
+        <!-- Mais estilos, se necessário -->
         #{get 'moreStyles' /}
-        <link rel="shortcut icon" type="image/png" href="@{'/public/images/iconeSTF.png'}">
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/LogoSPF.png'}">
     </head>
     <body>
-        .
-        #{if session.get("usuario.nivel").equals("1")}
-            <a href="@{Usuarios.form}" class="btn btn-primary">Cadastrar Usuário</a>
-            <a href="@{Produtos.form}" class="btn btn-primary">Cadastrar Fardamento</a>
-            <a href="@{Produtos.listar}" class="btn btn-primary">Ver Fardamento Cadastrado</a>
-        #{/if}
-
-        <!-- Verifica se o usuário está logado antes de exibir os links "Lista" e "Sair" -->
+        <!-- Verifica se o usuário está logado -->
         #{if session.get("usuario.email") != null}
-            <a href="@{Login.sair}" class="btn btn-danger">Sair</a>
-            
-            <p>Bem-vindo, <span id="usuario-nome">${session.get("usuario.nome")}</span></p>
+            <!-- Verifica se estamos na página inicial -->
+            #{if get('isHomePage').equals("true")}
+                <!-- Exibe elementos baseados no nível do usuário -->
+                #{if session.get("usuario.nivel").equals("1") || session.get("usuario.nivel").equals("0")}
+                    <a href="@{Login.sair}" class="btn btn-danger">Sair</a>
+                    <p>Bem-vindo, <span id="usuario-nome">${session.get("usuario.nome")}</span></p>
+                #{/if}
+                
+                #{if session.get("usuario.nivel").equals("1")}
+                    <a href="@{Usuarios.form}" class="btn btn-primary">Cadastrar Usuário</a>
+                    <a href="@{Produtos.form}" class="btn btn-primary">Cadastrar Fardamento</a>
+                    <a href="@{Produtos.listar}" class="btn btn-primary">Ver Fardamento Cadastrado</a>
+                    <a href="@{Pedidos.listar}" class="btn btn-secondary">Lista de Pedidos</a>
+                #{/if}
+                #{if session.get("usuario.nivel").equals("0")}
+                    <a href="@{Pedidos.form()}" class="btn btn-success">Fazer Pedido</a>
+                #{/if}
+            #{/if}
         #{/if}
         
         <br/>
 
+        <!-- Layout principal -->
         #{doLayout /}
         
-        <script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <!-- Mais scripts, se necessário -->
         #{get 'moreScripts' /}
-
-        <!--  para salvar usuário com AJAX e atualizar o nome -->
-        <script>
-            function salvarUsuario() {
-                var form = $('#usuario-form');
-                $.ajax({
-                    type: 'POST',
-                    url: form.attr('action'),
-                    data: form.serialize(),
-                    success: function(response) {
-                        // Atualize o nome do usuário exibido
-                        $('#usuario-nome').text(response.nome);
-                        alert('Usuário salvo com sucesso!');
-                        // Redirecionar para a tela de listagem
-                        window.location.href = '@{Usuarios.listar}';
-                    },
-                    error: function() {
-                        alert('Erro ao salvar usuário.');
-                    }
-                });
-            }
-        </script>
     </body>
 </html>
